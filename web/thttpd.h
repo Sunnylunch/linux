@@ -15,6 +15,8 @@
 #include<pthread.h>
 #include<fcntl.h>
 #include<unistd.h>
+#include<syslog.h>
+
 
 #define NORMAL  0
 #define WRONING 1

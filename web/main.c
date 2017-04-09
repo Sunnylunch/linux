@@ -3,18 +3,19 @@
 static void* msg_request(void *arg)
 {
 	int sock=(int)arg;
-	pthread_detach(pthread_self());
+	pthread_detach(pthread_self());	
 	return (void*)handler_msg(sock);
 }
 
 int main(int argc,char* argv[])
 {
+	daemon(1,0);
 	if(argc!=3)
 	{
-		printf("Usage:%s [local_ip] [local_port]\n",argv[0]);
+		printf_log("Usage: [local_ip] [local_port]\n",FATAL);
 		return 1;
 	}
-	
+
 	int lis_sock=startup(argv[1],atoi(argv[2]));
 
 	while(1)
@@ -37,6 +38,5 @@ int main(int argc,char* argv[])
 			close(sock);
 		}
 	}
-
 	return 0;
 }
