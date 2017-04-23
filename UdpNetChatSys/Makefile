@@ -5,6 +5,8 @@ CONF_PATH=$(ROOT_PATH)/conf
 LIB_PATH=$(ROOT_PATH)/lib
 LOG_PATH=$(ROOT_PATH)/log
 WINDOW_PATH=$(ROOT_PATH)/window
+DATAPOOL_PATH=$(ROOT_PATH)/pool
+
 CC=g++
 
 SERVER=UdpServer
@@ -36,6 +38,11 @@ $(CLIENT):$(CLIENT_OBJ)
 %.o:$(CLIENT_PATH)/%.cpp
 	@echo Compling [$^] to [$@] ...
 	$(CC) -c $<
+
+
+
+
+
 
 .PHONY:clean
 clean:

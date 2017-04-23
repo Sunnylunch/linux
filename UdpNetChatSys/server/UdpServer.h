@@ -26,10 +26,8 @@ private:
 	int _sock;
 	std::string _ip;
 	int _port;
+	std::map<in_addr_t,struct sockaddr_in> userList;
 };
-
-
-
 
 
 #endif  
