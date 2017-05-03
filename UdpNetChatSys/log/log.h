@@ -1,4 +1,4 @@
-#define _LOG_H_
+#ifndef _LOG_H_
 #define _LOG_H_
 #include<stdio.h>
 #include<iostream>
@@ -7,6 +7,6 @@
 #define WARNING 2
 #define FATAL   4
 
-std::string leve[]={"[normal] ","[notice] ","[warning] ","[fatal] "};
 
+void print_log(std::string msg,int l);
 #endif

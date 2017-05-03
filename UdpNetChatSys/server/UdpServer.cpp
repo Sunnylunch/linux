@@ -1,8 +1,8 @@
 #include"UdpServer.h"
-
 udp_server::udp_server(const std::string ip,const int port)
 	:_ip(ip)
 	,_port(port)
+	,pool(1024)
 {}
 
 
@@ -27,9 +27,17 @@ void udp_server::initServer()
 }
 
 
-void udp_server::addrUser(const struct sockaddr_in &remote)
+void udp_server::addrUser(struct sockaddr_in &remote)
 {
-	userList.insert(pair<in_addr_t,struct sockaddr_in>(remote.sin_addr.s_addr,remote));
+	userList.insert(std::pair<in_addr_t,struct sockaddr_in>(remote.sin_addr.s_addr,remote));
+}
+
+
+void udp_server::delUser(struct sockaddr_in &remote)
+{
+	std::map<in_addr_t,struct sockaddr_in>::iterator iter=userList.find(remote.sin_addr.s_addr);
+	if(iter!=userList.end())
+		userList.erase(iter);
 }
 
 
@@ -45,8 +53,21 @@ int udp_server::recvData(std::string &outString)
 		print_log("recvfrom error",WARNING);
 		return s;
 	}
-	addrUser(remote);
+	buf[s]='\0';
+	outString=buf;
 	pool.putData(outString);
+	
+	datatype data;
+	data.str_to_val(outString);
+
+	if(data.cmd=="QUIT")
+	{
+		delUser(remote);	//有用户退出，从用户列表中删除
+	}
+	else
+	{
+		addrUser(remote);
+	}
 	return s;
 }
 
@@ -56,7 +77,7 @@ int udp_server::sendData(std::string &inString,struct sockaddr_in &remote)
 	ssize_t s=sendto(_sock,inString.c_str(),inString.size(),0,(struct sockaddr*)&remote,sizeof(remote));
 	if(s<0)
 	{
-		print_log("sendto error",WARING);
+		print_log("sendto error",WARNING);
 		return s;
 	}
 	return s;
@@ -67,7 +88,7 @@ int udp_server::broadcast()
 {
 	std::string inString;
 	pool.getData(inString);
-	map<in_addr_in,struct sockaddr_in>::iterator iter=userList.begin();
+	std::map<in_addr_t,struct sockaddr_in>::iterator iter=userList.begin();
 	for(;iter!=userList.end();iter++)
 	{
 		sendData(inString,iter->second);
