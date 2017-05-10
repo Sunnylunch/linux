@@ -1,0 +1,43 @@
+<html> 
+<head> 
+<title>我的关系</title> 
+</head> 
+<body>
+		
+		<form name="input" action="/cgi_bin/sql/msg_insert" method="get">
+			tel  : <input type="text" name="tel"></br>
+			name : <input type="text" name="name"></br>
+			sex  : <input type="text" name="sex"></br>
+			city :<input type="text" name="city"></br>
+			value: <input type="text" name="value"></br>
+		<input type="submit"  value="insert"> 
+		</form>
+
+		</br>
+		</br>	
+		<form name="input" action="/cgi_bin/sql/msg_delete" method="get">
+			tel  : <input type="text" name="tel"></br>
+			value: <input type="text" name="value"></br>
+		<input type="submit"  value="delete"> 
+		</form>
+		</br>
+		</br>
+		
+		<form name="input" action="/cgi_bin/sql/msg_update" method="get">
+			tel  : <input type="text" name="tel"></br>
+			name : <input type="text" name="name"></br>
+			sex  : <input type="text" name="sex"></br>
+			city :<input type="text" name="city"></br>
+			value: <input type="text" name="value"></br>
+		<input type="submit"  value="update"> 
+		</form>
+
+		</br>
+		</br>
+		<form name="input" action="/cgi_bin/sql/msg_select" method="get">
+			tel: <input type="text" name="tel"></br>
+		<input type="submit"  value="search"> 
+		</form>
+	
+</body> 
+</html>
