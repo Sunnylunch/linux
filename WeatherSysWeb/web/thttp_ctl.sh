@@ -12,7 +12,9 @@ function thttpd_start()
 	}
 	IP=`grep -E '^IP:' $CONF | awk -F: '{print $2}' `
 	PORT=`grep -E '^PORT:' $CONF | awk -F: '{print $2}' `
-	$BIN $IP $PORT
+	PROCCNT=`grep -E '^PROCCNT:' $CONF | awk -F: '{print $2}' `
+	CNT=`grep -E '^CNT:' $CONF | awk -F: '{print $2}' `
+	$BIN $IP $PORT $PROCCNT $CNT
 	pidof thttpd >thttpd.pid
 	printf "thttpd is runing...\n"
 }
