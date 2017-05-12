@@ -90,7 +90,7 @@ static void clear_header(int sock)    //清空消息报头
 	do
 	{
 		ret=get_line(sock,buf);
-	}while(ret!=1&&(strcmp(buf,"\n")==0));
+	}while(ret!=1&&(strcmp(buf,"\n")!=0));
 }
 
 
