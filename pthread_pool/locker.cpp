@@ -43,7 +43,7 @@ bool locker::lock()
 
 bool locker::unlock()
 {
-	return pthread_mutex_unlock(&mutex);
+	return pthread_mutex_unlock(&m_mutex);
 }
 
 cond::cond()

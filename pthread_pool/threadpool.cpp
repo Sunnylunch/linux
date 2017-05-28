@@ -1,4 +1,33 @@
-#include"threadpool.h"
+#include<iostream>
+#include<pthread.h>
+#include<cstdio>
+#include<list>
+#include<exception>
+
+#include"locker.h"
+
+//为了提高复用性，我们用模板实现线程池，模板类型T是任务类
+template<typename T>
+class threadpool
+{
+public:
+	threadpool(int thread_number=8,int max_requests=1000);
+	~threadpool();
+	bool append(T* request);        //向请求队列中添加请求
+private:
+	static void* worker(void *arg);  //线程执行函数
+	void run();						//实际运行线程的函数
+private:
+	int m_thread_number;			//线程的数量
+	int m_max_requests;             //请求队列的最大容量
+	pthread_t *m_threads;			//指向管理线程tid的数组
+	std::list<T*> m_workqueue;		//请求队列
+	locker m_queuelocker;				//保护请求队列的互斥锁
+	sem m_queuestat;				//请求队列中是否有任务要处理
+	bool m_stop;					//是否结束线程
+};
+
+
 
 template<typename T>
 threadpool<T>::threadpool(int thread_number,int max_requests)
@@ -20,13 +49,13 @@ threadpool<T>::threadpool(int thread_number,int max_requests)
 	
 	for(int i=0;i<thread_number;i++)          //创建thread_number个线程，并且将其设置为分离状态
 	{
-		if(pthread_create(m_threads+i,NULL,worker,this)!=0)
+		if(pthread_create(m_threads+i,NULL,worker,(void*)this)!=0)
 		{
 			delete [] m_threads;
 			throw std::exception();
 		}
 
-		if(pthread_detach(m_thread[i]))
+		if(pthread_detach(m_threads[i]))
 		{
 			delete [] m_threads;
 			throw std::exception();
@@ -47,7 +76,7 @@ bool threadpool<T>::append(T* request)         //向请求队列中添加请求�
 	m_queuelocker.lock();						
 	if(m_workqueue.size()>m_max_requests)      //确保请求队列中没有被任务堆积满
 	{
-		m_queuework.unlock();
+		m_queuelocker.unlock();
 		return false;
 	}
 	m_workqueue.push_back(request);
@@ -57,7 +86,7 @@ bool threadpool<T>::append(T* request)         //向请求队列中添加请求�
 }
 	
 template<typename T>
-static void* threadpool<T>::woker(void *arg)
+void* threadpool<T>::worker(void *arg)
 {
 	threadpool *pool=(threadpool*)arg;
 	pool->run();						//调用run函数处理请求队列中的请求任务
@@ -74,7 +103,7 @@ void threadpool<T>::run()           //处理请求队列中的请求任务
 		m_queuelocker.lock();
 		if(m_workqueue.empty())
 		{
-			m_queuework.unlock();
+			m_queuelocker.unlock();
 			continue;
 		}
 
