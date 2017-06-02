@@ -46,7 +46,7 @@ public:
 	lruCache(size_t capacity);
 	~lruCache();
 	void lruCacheSet(K key, T data);  //向缓存中放入数据
-	T lruCacheGet(K key);  //从缓存中得到数据
+	bool lruCacheGet(K key,T& data);  //从缓存中得到数据
 private:
 	void RemoveFromList(Node* post);    //从双向链表中删除指定结点
 	cacheNode<K, T>* InsertToListHead(Node* node);  //向双向链表的表头插入数据
@@ -80,6 +80,7 @@ template<typename K, typename T, class Compare = isEqual<K>>
 lruCache<K, T, Compare>::~lruCache()
 {
 	DeleteList(_lruListHead);
+	delete[] _hashMap;
 	_capacity = 0;
 	_hashMap = NULL;
 	_lruListHead = NULL;
@@ -109,15 +110,16 @@ void lruCache<K, T, Compare>::lruCacheSet(K key, T data)    //向缓存中放入
 }
 
 template<typename K, typename T, class Compare = isEqual<K>>
-T lruCache<K, T, Compare>::lruCacheGet(K key)  //从缓存中得到数据
+bool lruCache<K, T, Compare>::lruCacheGet(K key,T& data)  //从缓存中得到数据
 {
 	Node* node = GetValueFromHashMap(key);        //从hashmap中获取一个缓存单元	
 	if (NULL != node)
 	{
 		UpdateLRUList(node);
-		return node->data;
+		data=node->data;
+		return true;
 	}
-	return T();
+	return false;
 }
 
 template<typename K, typename T, class Compare = isEqual<K>>
