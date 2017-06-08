@@ -1,0 +1,4 @@
+total 12
+-rw-rw-r--. 1 admin admin  71 Jun  7 21:24 file
+-rw-rw-r--. 1 admin admin 600 Jun  7 18:28 main
+-rw-rw-r--. 1 admin admin 142 Jun  7 18:27 test
